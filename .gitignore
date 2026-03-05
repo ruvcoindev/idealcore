@@ -1,0 +1,27 @@
+# Go
+/bin
+*.exe
+*.test
+*.prof
+*.out
+
+# Векторные индексы
+*.hnsw
+*.bin
+
+# Логи
+*.log
+logs/
+
+# Окружение
+.env
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Сборка
+dist/
+build/
