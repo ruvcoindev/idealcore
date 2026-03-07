@@ -2,6 +2,7 @@ package hypercube
 
 import (
 	"testing"
+
 	"github.com/ruvcoindev/idealcore/internal/domain"
 )
 
@@ -27,13 +28,26 @@ func TestCalculateVectors(t *testing.T) {
 	vectors := CalculateVectors(coords)
 
 	// Ожидаемые векторы из разбора фильма
+	// Формат: [индекс_координаты][компоненты_вектора]
+	// Каждая строка — вектор для соответствующей координаты (477, 804, 539)
 	expected := [3][3]int32{
-		{-3, 8, 2},  // для 477: 4-7=-3, 7-7=0, 7-4=3 → но с учетом порядка цифр
-		{8, -4, -4}, // для 804
-		{2, -6, 4},  // для 539
+		{-3, 8, 2},  // вектор для 477
+		{8, -4, -4}, // вектор для 804
+		{2, -6, 4},  // вектор для 539
 	}
 
-	// Упрощенная проверка: сумма векторов должна давать 0 (замкнутый цикл)
+	// 1. Прямое сравнение с эталонными значениями
+	for i := range expected {
+		if vectors[i] != expected[i] {
+			t.Errorf(
+				"CalculateVectors(%v)[%d] = %v, want %v",
+				coords, i, vectors[i], expected[i],
+			)
+		}
+	}
+
+	// 2. Дополнительная проверка: сумма векторов должна давать 0 (замкнутый цикл)
+	// Это свойство важно для топологии гиперкуба
 	var sum [3]int32
 	for _, v := range vectors {
 		for i, comp := range v {
@@ -41,7 +55,7 @@ func TestCalculateVectors(t *testing.T) {
 		}
 	}
 	if sum != [3]int32{0, 0, 0} {
-		t.Errorf("Vectors do not form closed cycle: sum = %v", sum)
+		t.Errorf("Vectors do not form closed cycle: sum = %v, want [0 0 0]", sum)
 	}
 }
 
