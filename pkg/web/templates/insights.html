@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Title}}</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="page-insights">
+  <header class="header">
+    <nav class="nav">
+      <a href="/" class="nav-logo">idealcore</a>
+      <ul class="nav-links">
+        <li><a href="/diary" class="nav-link">Дневник</a></li>
+        <li><a href="/intention" class="nav-link">Намерения</a></li>
+        <li><a href="/insights" class="nav-link active">Инсайты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main insights-main">
+    <h1>Инсайты</h1>
+    <p class="insights-intro">Твои паттерны, травмы, ресурсы — в одном месте.</p>
+
+    <div class="insights-grid">
+      <div class="insight-card">
+        <h3>🧭 Тип привязанности</h3>
+        <p id="attachment-type">Определяется по записям дневника</p>
+        <button class="btn btn-secondary" id="calc-attachment">Пересчитать</button>
+      </div>
+
+      <div class="insight-card">
+        <h3>🩹 Травмы</h3>
+        <div id="trauma-list" class="tag-list"></div>
+      </div>
+
+      <div class="insight-card">
+        <h3>🛡️ Защиты</h3>
+        <div id="defense-list" class="tag-list"></div>
+      </div>
+
+      <div class="insight-card">
+        <h3>🧘 Чакры</h3>
+        <div id="chakra-list" class="tag-list"></div>
+      </div>
+    </div>
+
+    <div class="insights-search">
+      <h3>🔍 Поиск по дневнику</h3>
+      <input type="text" id="search-query" placeholder="Например: вина, граница, мать...">
+      <button class="btn btn-primary" id="search-btn">Найти</button>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Работа — это работа. Жизнь — это жизнь. Я — это я.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/insights.js"></script>
+</body>
+</html>

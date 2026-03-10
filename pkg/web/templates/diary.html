@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Title}}</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="page-diary">
+  <header class="header">
+    <nav class="nav">
+      <a href="/" class="nav-logo">idealcore</a>
+      <ul class="nav-links">
+        <li><a href="/diary" class="nav-link active">Дневник</a></li>
+        <li><a href="/intention" class="nav-link">Намерения</a></li>
+        <li><a href="/insights" class="nav-link">Инсайты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main diary-main">
+    <h1>Дневник «Кто я»</h1>
+    <p class="diary-intro">Пиши честно. Без самооправданий. Без «надо». Только то, что живо сейчас.</p>
+
+    <div id="diary-loader" class="loader">Загрузка вопросов...</div>
+    
+    <form id="diary-form" class="diary-form hidden">
+      <input type="hidden" id="user-id" value="{{.UserID}}">
+      <div id="diary-content"></div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Сохранить всё</button>
+        <button type="button" id="analyze-btn" class="btn btn-secondary">Проанализировать</button>
+      </div>
+    </form>
+
+    <div id="analysis-result" class="analysis-result hidden">
+      <h3>Анализ записей</h3>
+      <div id="analysis-content"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Работа — это работа. Жизнь — это жизнь. Я — это я.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/diary.js"></script>
+</body>
+</html>

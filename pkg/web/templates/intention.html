@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Title}}</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="page-intention">
+  <header class="header">
+    <nav class="nav">
+      <a href="/" class="nav-logo">idealcore</a>
+      <ul class="nav-links">
+        <li><a href="/diary" class="nav-link">Дневник</a></li>
+        <li><a href="/intention" class="nav-link active">Намерения</a></li>
+        <li><a href="/insights" class="nav-link">Инсайты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main intention-main">
+    <h1>Генератор намерений</h1>
+    <p class="intention-intro">Намерение — не аффирмация. Это декларация права быть. Не «я стану», а «я есть».</p>
+
+    <form id="intention-form" class="intention-form">
+      <input type="hidden" id="user-id" value="{{.UserID}}">
+      
+      <div class="form-group">
+        <label for="theme">Тема намерения</label>
+        <select id="theme" name="theme" required>
+          <option value="">Выбери тему...</option>
+          {{range .Themes}}
+          <option value="{{.}}">{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Тип травмы (опционально)</label>
+          <div class="checkbox-group">
+            {{range .TraumaTypes}}
+            <label class="checkbox-label">
+              <input type="checkbox" name="trauma" value="{{.}}">
+              <span>{{.}}</span>
+            </label>
+            {{end}}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Тип привязанности</label>
+          <select id="attachment" name="attachment">
+            <option value="">не указан</option>
+            {{range .AttachmentTypes}}
+            <option value="{{.}}">{{.}}</option>
+            {{end}}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Фокус чакр</label>
+          <div class="checkbox-group">
+            {{range .ChakraTypes}}
+            <label class="checkbox-label">
+              <input type="checkbox" name="chakra" value="{{.}}">
+              <span>{{.}}</span>
+            </label>
+            {{end}}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Защитные механизмы</label>
+          <div class="checkbox-group">
+            {{range .DefenseTypes}}
+            <label class="checkbox-label">
+              <input type="checkbox" name="defense" value="{{.}}">
+              <span>{{.}}</span>
+            </label>
+            {{end}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="raw-prompt">Дополнительный запрос (опционально)</label>
+        <textarea id="raw-prompt" name="raw_prompt" placeholder="Например: 'Сделай текст более телесным, убери общие фразы...'"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="generate-btn">Сгенерировать</button>
+        <button type="button" class="btn btn-secondary" id="copy-btn" disabled>Копировать</button>
+      </div>
+    </form>
+
+    <div id="result" class="intention-result hidden">
+      <h3>Твоё намерение</h3>
+      <pre id="intention-text" class="intention-text"></pre>
+      <div id="rag-info" class="rag-info hidden">
+        <small>🔍 Использованы фрагменты из дневника (RAG)</small>
+      </div>
+    </div>
+
+    <div class="style-guide">
+      <h4>Стиль намерения</h4>
+      <ul>
+        <li>✅ «Я есть» — настоящее время</li>
+        <li>✅ Работа с виной, страхом, контролем</li>
+        <li>✅ Короткие фразы + плавные переходы</li>
+        <li>❌ Без «вселенная», «поток», «изобилие»</li>
+        <li>❌ Без обещаний изменений</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Работа — это работа. Жизнь — это жизнь. Я — это я.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/intention.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Title}}</title>
+  <meta name="description" content="{{.Description}}">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="/static/icons/favicon.ico">
+</head>
+<body class="page-index">
+  <header class="header">
+    <nav class="nav">
+      <a href="/" class="nav-logo">idealcore</a>
+      <ul class="nav-links">
+        <li><a href="/diary" class="nav-link {{if eq .CurrentPath "/diary"}}active{{end}}">Дневник</a></li>
+        <li><a href="/intention" class="nav-link {{if eq .CurrentPath "/intention"}}active{{end}}">Намерения</a></li>
+        <li><a href="/insights" class="nav-link {{if eq .CurrentPath "/insights"}}active{{end}}">Инсайты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <h1>idealcore</h1>
+      <p class="hero-subtitle">твой путь к целостности</p>
+      <p class="hero-description">
+        Дневник «Кто я» • Генератор намерений • Психологический анализ • Практика на гвоздях
+      </p>
+      <div class="hero-actions">
+        <a href="/diary" class="btn btn-primary">Начать дневник</a>
+        <a href="/intention" class="btn btn-secondary">Сгенерировать намерение</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature-card">
+        <h3>📓 Дневник «Кто я»</h3>
+        <p>Пять разделов: мотивация, границы, ресурсы, паттерны, выбор. Пиши честно — без оценок.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🎯 Намерения для гвоздей</h3>
+        <p>Генерация текстов намерений с учётом твоей травмы, привязанности и энергетического фокуса.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🧠 Анализ и инсайты</h3>
+        <p>Автоматическое распознавание паттернов, защит, чакр. Поиск по дневнику через векторы.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔐 Локально и приватно</h3>
+        <p>Все данные — на твоём устройстве. Ollama работает офлайн. Никаких облаков.</p>
+      </div>
+    </section>
+
+    <section class="status">
+      <h3>Статус системы</h3>
+      <div id="system-status" class="status-grid">
+        <div class="status-item">
+          <span class="status-label">Ollama</span>
+          <span class="status-value" id="ollama-status">проверка...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Векторное хранилище</span>
+          <span class="status-value" id="vector-status">проверка...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Дневник</span>
+          <span class="status-value" id="diary-status">проверка...</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>idealcore — работа с собой, а не против себя</p>
+    <p class="footer-note">Работа — это работа. Жизнь — это жизнь. Я — это я.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/models');
+        const data = await res.json();
+        document.getElementById('ollama-status').textContent = 
+          data.models?.length > 0 ? `✅ ${data.models.length} моделей` : '❌ нет моделей';
+        document.getElementById('vector-status').textContent = '✅ активно';
+        document.getElementById('diary-status').textContent = '✅ активно';
+      } catch (e) {
+        document.getElementById('ollama-status').textContent = '❌ офлайн';
+      }
+    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>
