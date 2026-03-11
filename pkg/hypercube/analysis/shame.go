@@ -6,92 +6,94 @@ import (
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
 )
 
-// ShameAnalysisResult содержит результаты анализа стыда
-type ShameAnalysisResult struct {
-	TotalScore      float64              // Общий уровень стыда (0-100)
-	PrimaryPattern  string               // Основной паттерн: "burning", "freezing", "fleeing"
-	BodyZones       map[string]float64   // Зоны тела и уровень напряжения
-	Triggers        []string             // Основные триггеры
-	Recommendations []string             // Рекомендации по работе со стыдом
+// extractDigits извлекает три цифры числа (локальная версия)
+func extractDigits(n int32) []int32 {
+	n = int32(math.Abs(float64(n)))
+	return []int32{
+		(n / 100) % 10,
+		(n / 10) % 10,
+		n % 10,
+	}
 }
 
-// CalculateBodyShame вычисляет уровень телесного стыда на основе координат и роли
-// Стыд - ключевой компонент травмы, особенно в нарциссических семьях
-// Параметры:
-// - coords: координаты в гиперкубе
-// - traumaRole: выявленная травматическая роль
-// - ageAtEvent: возраст для учета накопления
-// - member: расширенные данные (для учета замещения, потерь и т.д.)
+// ShameAnalysisResult содержит результаты анализа стыда
+type ShameAnalysisResult struct {
+	TotalScore      float64
+	PrimaryPattern  string
+	BodyZones       map[string]float64
+	Triggers        []string
+	Recommendations []string
+}
+
+// CalculateBodyShame вычисляет уровень телесного стыда
 func CalculateBodyShame(coords core.HypercubeCoords, traumaRole core.TraumaRole, ageAtEvent int, member *data.ExtendedFamilyMember) float64 {
-	// Базовый стыд из цифр координат (0-90)
-	digits := core.ExtractDigits(coords.X + coords.Y + coords.Z)
+	// Используем XOR для более стабильной "суммы"
+	sum := coords.X ^ coords.Y ^ coords.Z
+	digits := extractDigits(sum)
 	baseShame := float64(digits[0] * 10)
-	
-	// Коэффициенты для разных травматических ролей
-	// Основано на клинических наблюдениях: разные роли несут разный уровень стыда
+
+	// Коэффициенты для ролей
 	roleMultiplier := map[core.TraumaRole]float64{
-		core.TraumaRoleScapegoat:      1.8, // Козел отпущения - высокий стыд
-		core.TraumaRoleGoldenChild:    1.3, // Любимчик - стыд за несовершенство
-		core.TraumaRoleLostChild:      1.6, // Потерянный - стыд за само существование
-		core.TraumaRoleInvisible:      1.5, // Невидимка - стыд за потребности
-		core.TraumaRoleGlassChild:     1.4, // Стеклянный - стыд за то, что "нормальный"
-		core.TraumaRoleParentified:    1.7, // Родифицированный - стыд за неспособность "спасти"
-		core.TraumaRoleMascot:         1.2, // Шут - стыд, скрытый юмором
-		core.TraumaRoleEmotionalSpouse: 1.9, // Эмоциональный супруг - глубокий стыд за инцестуозную связь
-		core.TraumaRoleTruthTeller:    1.5, // Говорящий правду - стыд за "предательство" семьи
-		core.TraumaRoleShadow:         1.8, // Тень - стыд за подавленные эмоции
-		core.TraumaRoleHealer:         1.3, // Целитель - стыд за неспособность исцелить
-		core.TraumaRoleReplacement:    2.2, // Замещающий ребенок - максимальный стыд
-		core.TraumaRoleGhost:          1.0, // Призрак - не чувствует стыда (не жив)
-		core.TraumaRoleAncestor:       1.5, // Предок - родовой стыд
-	}
-	
-	multiplier := roleMultiplier[traumaRole]
-	if multiplier == 0 {
-		multiplier = 1.0
+		core.TraumaRoleScapegoat:       1.8,
+		core.TraumaRoleGoldenChild:     1.3,
+		core.TraumaRoleLostChild:       1.6,
+		core.TraumaRoleInvisible:       1.5,
+		core.TraumaRoleGlassChild:      1.4,
+		core.TraumaRoleParentified:     1.7,
+		core.TraumaRoleMascot:          1.2,
+		core.TraumaRoleEmotionalSpouse: 1.9,
+		core.TraumaRoleTruthTeller:     1.5,
+		core.TraumaRoleShadow:          1.8,
+		core.TraumaRoleHealer:          1.3,
+		core.TraumaRoleReplacement:     2.2,
+		core.TraumaRoleGhost:           0.5, // Призрак чувствует меньше
+		core.TraumaRoleAncestor:        1.5,
+	}[traumaRole]
+
+	if roleMultiplier == 0 {
+		roleMultiplier = 1.0
 	}
 
-	// Накопление стыда с возрастом (экспоненциально, если не прорабатывать)
-	accumulated := baseShame * multiplier * math.Exp(float64(ageAtEvent)/20.0)
-	
-	// Дополнительные факторы из расширенных данных
+	// Базовый расчёт
+	accumulated := baseShame * roleMultiplier * math.Exp(float64(ageAtEvent)/20.0)
+
+	// Мультипликативные бонусы за события
 	if member != nil {
-		// Замещающие дети несут дополнительный стыд
+		eventBonus := 0.0
+
 		if member.IsReplacement && member.ReplacementData != nil {
-			accumulated *= (1 + member.ReplacementData.BurdenLevel)
+			eventBonus += member.ReplacementData.BurdenLevel
 		}
-		
-		// Вина выжившего добавляет стыд
-		accumulated += member.SurvivorGuilt * 50
-		
-		// Аборты и потери
-		for _, abortion := range member.Abortions {
-			accumulated += abortion.EmotionalImpact * 30
+
+		eventBonus += member.SurvivorGuilt * 0.4
+
+		// Учитываем количество абортов как фактор
+if member.AbortionCount > 0 {
+    eventBonus += float64(member.AbortionCount) * 0.15
+}
+
+		for _, i := range member.Infidelities {
+			eventBonus += i.Impact * 0.2
 		}
-		
-		// Измены
-		for _, infidelity := range member.Infidelities {
-			accumulated += infidelity.Impact * 20
+
+		for _, d := range member.Diseases {
+			eventBonus += d.Severity * 0.25
 		}
-		
-		// Заболевания
-		for _, disease := range member.Diseases {
-			accumulated += disease.Severity * 25
-		}
-		
-		// Кармические долги
+
 		for _, debt := range member.KarmicDebts {
 			if !debt.IsResolved {
-				accumulated += debt.Weight * 40
+				eventBonus += debt.Weight * 0.5
 			}
 		}
+
+		// Множитель вместо сложения
+		accumulated *= (1 + eventBonus)
 	}
-	
-	// Ограничиваем до 250 (максимальный уровень)
+
 	return math.Min(accumulated, 250.0)
 }
 
-// AnalyzeShamePattern определяет паттерн стыда по векторам и роли
+// AnalyzeShamePattern определяет паттерн стыда
 func AnalyzeShamePattern(vectors core.PersonVectors, traumaRole core.TraumaRole) *data.ShamePattern {
 	amp := core.VectorAmplitude(vectors)
 	
@@ -100,25 +102,20 @@ func AnalyzeShamePattern(vectors core.PersonVectors, traumaRole core.TraumaRole)
 		Triggers: make([]string, 0),
 	}
 	
-	// Определяем паттерн по амплитуде
 	if amp > 6.0 {
-		// Высокая амплитуда - активный стыд, "сжигание"
 		pattern.Pattern = "burning"
 		pattern.BodyZone = "whole"
 		pattern.Score = amp * 10
 	} else if amp < 3.0 {
-		// Низкая амплитуда - заморозка, оцепенение
 		pattern.Pattern = "freezing"
 		pattern.BodyZone = "gut"
 		pattern.Score = 100 - amp*10
 	} else {
-		// Средняя амплитуда - бегство, избегание
 		pattern.Pattern = "fleeing"
 		pattern.BodyZone = "heart"
 		pattern.Score = 50
 	}
 	
-	// Добавляем триггеры в зависимости от роли
 	switch traumaRole {
 	case core.TraumaRoleScapegoat:
 		pattern.Triggers = []string{"критика", "обвинения", "конфликты", "публичные ситуации"}
@@ -135,7 +132,7 @@ func AnalyzeShamePattern(vectors core.PersonVectors, traumaRole core.TraumaRole)
 	return pattern
 }
 
-// GenerateShameReport генерирует отчет по стыду для человека
+// GenerateShameReport генерирует отчет по стыду
 func GenerateShameReport(member *data.ExtendedFamilyMember, traumaRole core.TraumaRole, vectors core.PersonVectors) ShameAnalysisResult {
 	coords := core.ParseDateToCoords(member.BirthDate)
 	age := member.GetAge()
@@ -143,16 +140,14 @@ func GenerateShameReport(member *data.ExtendedFamilyMember, traumaRole core.Trau
 	totalShame := CalculateBodyShame(coords, traumaRole, age, member)
 	pattern := AnalyzeShamePattern(vectors, traumaRole)
 	
-	// Анализ зон тела (упрощенно)
 	bodyZones := map[string]float64{
-		"голова":    totalShame * 0.2,
-		"горло":     totalShame * 0.15,
-		"грудь":     totalShame * 0.25,
-		"живот":     totalShame * 0.3,
-		"таз":       totalShame * 0.1,
+		"голова": totalShame * 0.2,
+		"горло":  totalShame * 0.15,
+		"грудь":  totalShame * 0.25,
+		"живот":  totalShame * 0.3,
+		"таз":    totalShame * 0.1,
 	}
 	
-	// Рекомендации в зависимости от уровня стыда
 	recommendations := make([]string, 0)
 	
 	if totalShame > 150 {
@@ -180,7 +175,6 @@ func GenerateShameReport(member *data.ExtendedFamilyMember, traumaRole core.Trau
 			"   • Осознанность")
 	}
 	
-	// Добавляем рекомендации по паттерну
 	switch pattern.Pattern {
 	case "burning":
 		recommendations = append(recommendations,

@@ -51,7 +51,14 @@ func BuildFamilySystem(t *testing.T, testFamily *TestFamily, extended bool) *mod
 			gender = core.GenderMale
 		}
 
-		member, err := data.CreateFamilyMember(tm.ID, tm.Name, gender, tm.BirthDate)
+		// Определяем роль на основе пола (для тестов достаточно базовых ролей)
+		role := core.RoleDaughter
+		if tm.Gender == "male" {
+			role = core.RoleSon
+		}
+
+		// ИСПРАВЛЕНО: добавлен аргумент role
+		member, err := data.CreateFamilyMember(tm.ID, tm.Name, gender, role, tm.BirthDate)
 		if err != nil {
 			t.Fatalf("Failed to create member %s: %v", tm.ID, err)
 		}

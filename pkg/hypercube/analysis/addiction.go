@@ -3,6 +3,7 @@ package analysis
 import (
 	"fmt"
 	"strings"
+	"time"  // <--- ЭТО НУЖНО ДОБАВИТЬ
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/model"
@@ -239,53 +240,54 @@ func AnalyzeAddictionDynamics(fs *model.FamilySystem) *AddictionAnalysisResult {
 		}
 	}
 
-	// Ищем энейблеров (тех, кто способствует/покрывает)
-	for id, member := range fs.Members {
-		if id == dynamics.PrimaryAddictID {
-			continue
-		}
-		
-		// Проверяем, есть ли признаки созависимости
-		coords := core.ParseDateToCoords(member.BirthDate)
-		vectors := core.CalculateVectors(coords)
-		amp := core.VectorAmplitude(vectors)
-		
-		// Низкая амплитуда может указывать на подавление себя (созависимость)
-		if amp < 2.5 {
-			// Проверяем, связан ли с основным зависимым
-			if member.HasPartner(dynamics.PrimaryAddictID) ||
-			   containsString(member.Children, dynamics.PrimaryAddictID) ||
-			   containsString(member.Parents, dynamics.PrimaryAddictID) {
-				dynamics.Enablers = append(dynamics.Enablers, id)
-			}
-		}
-	}
+// Ищем энейблеров (тех, кто способствует/покрывает)
+for id, member := range fs.Members {
+    if id == dynamics.PrimaryAddictID {
+        continue
+    }
 
-	// Определяем паттерн
-	if len(dynamics.AddictionTypes) > 2 {
-		dynamics.Pattern = AddictionPatternMultiple
-	} else if checkGenerationalAddiction(fs, result.Incidents) {
-		dynamics.Pattern = AddictionPatternGenerational
-		dynamics.Generational = true
-	} else if len(dynamics.Enablers) > 0 {
-		dynamics.Pattern = AddictionPatternEnabling
-	} else {
-		dynamics.Pattern = AddictionPatternSingle
-	}
+    // Проверяем, есть ли признаки созависимости
+    coords := core.ParseDateToCoords(member.BirthDate)
+    vectors := core.CalculateVectors(coords)
+    amp := core.VectorAmplitude(vectors)
 
-	// Оцениваем уровень нормализации
-	dynamics.NormalizationLevel = calculateNormalizationLevel(fs, dynamics.PrimaryAddictID)
-	
-	// Оцениваем уровень секретности
-	dynamics.SecrecyLevel = calculateSecrecyLevel(result.Incidents)
+    // Низкая амплитуда может указывать на подавление себя (созависимость)
+    if amp < 2.5 {
+        // Проверяем, связан ли с основным зависимым
+        if member.HasPartner(dynamics.PrimaryAddictID) ||
+           ContainsString(member.Children, dynamics.PrimaryAddictID) ||
+           ContainsString(member.Parents, dynamics.PrimaryAddictID) {
+            dynamics.Enablers = append(dynamics.Enablers, id)
+        }
+    }
+}
 
-	// Оцениваем уровень риска
-	riskScore := 0.0
-	if dynamics.IncidentCount > 20 {
-		riskScore += 0.4
-	}
-	if dynamics.RelapseCount > 3 {
-		riskScore += 0.3
+// Определяем паттерн (ЭТОТ БЛОК ДОЛЖЕН БЫТЬ ПОСЛЕ ЦИКЛА)
+if len(dynamics.AddictionTypes) > 2 {
+    dynamics.Pattern = AddictionPatternMultiple
+} else if checkGenerationalAddiction(fs, result.Incidents) {
+    dynamics.Pattern = AddictionPatternGenerational
+    dynamics.Generational = true
+} else if len(dynamics.Enablers) > 0 {
+    dynamics.Pattern = AddictionPatternEnabling
+} else {
+    dynamics.Pattern = AddictionPatternSingle
+}
+
+// Оцениваем уровень нормализации
+dynamics.NormalizationLevel = calculateNormalizationLevel(fs, dynamics.PrimaryAddictID)
+
+// Оцениваем уровень секретности
+dynamics.SecrecyLevel = calculateSecrecyLevel(result.Incidents)
+
+// Оцениваем уровень риска
+riskScore := 0.0
+if dynamics.IncidentCount > 20 {
+    riskScore += 0.4
+}
+if dynamics.RelapseCount > 3 {
+    riskScore += 0.3
+
 	}
 	if dynamics.Pattern == AddictionPatternGenerational {
 		riskScore += 0.4
@@ -329,9 +331,108 @@ func AnalyzeAddictionDynamics(fs *model.FamilySystem) *AddictionAnalysisResult {
 	// Рекомендации
 	result.Recommendations = generateAddictionRecommendations(dynamics, result.RiskLevel)
 	
-	// Ресурсы помощи
+		// Ресурсы помощи
 	result.Resources = []string{
 		"📞 В России: бесплатная горячая линия помощи зависимым 8-800-700-50-50",
 		"📞 Анонимные Алкоголики: 8-800-555-55-55",
-		"📞 Нарколог
+		"📞 Нарколог: 8-800-200-0-200",
+		"🌐 Сайт: https://www.help-addiction.ru",
+	}
+
+	return result
+}
+
+func determineAddictionType(eventType string) AddictionType {
+	eventType = strings.ToLower(eventType)
+	
+	if strings.Contains(eventType, "alcohol") {
+		return AddictionTypeAlcohol
+	}
+	if strings.Contains(eventType, "drug") {
+		return AddictionTypeDrugs
+	}
+	if strings.Contains(eventType, "gambling") {
+		return AddictionTypeGambling
+	}
+	return AddictionTypeAlcohol // по умолчанию
+}
+
+func determineAddictionSeverity(description string) AddictionSeverity {
+	desc := strings.ToLower(description)
+	
+	if strings.Contains(desc, "critical") || strings.Contains(desc, "life-threatening") {
+		return AddictionSeverityCritical
+	}
+	if strings.Contains(desc, "severe") {
+		return AddictionSeveritySevere
+	}
+	if strings.Contains(desc, "moderate") {
+		return AddictionSeverityModerate
+	}
+	return AddictionSeverityMild
+}
+
+func determineAddictionStage(eventType string) AddictionStage {
+	eventType = strings.ToLower(eventType)
+	
+	if strings.Contains(eventType, "relapse") {
+		return AddictionStageRelapse
+	}
+	if strings.Contains(eventType, "treatment") || strings.Contains(eventType, "recovery") {
+		return AddictionStageRecovery
+	}
+	if strings.Contains(eventType, "crisis") {
+		return AddictionStageCrisis
+	}
+	return AddictionStageRegular
+}
+
+func checkGenerationalAddiction(fs *model.FamilySystem, incidents []AddictionIncident) bool {
+	// Упрощенная реализация - в реальном коде здесь будет анализ поколений
+	return false
+}
+
+func calculateNormalizationLevel(fs *model.FamilySystem, primaryAddictID string) float64 {
+	// Упрощенная реализация
+	return 0.5
+}
+
+func calculateSecrecyLevel(incidents []AddictionIncident) float64 {
+	// Упрощенная реализация
+	return 0.5
+}
+
+func generateAddictionRecommendations(dynamics *AddictionDynamics, riskLevel string) []string {
+	recs := []string{
+		"Рекомендации по работе с зависимостью:",
+	}
+	
+	switch riskLevel {
+	case "critical":
+		recs = append(recs,
+			"• Немедленное обращение к наркологу",
+			"• Стационарное лечение",
+			"• Детоксикация")
+	case "high":
+		recs = append(recs,
+			"• Консультация нарколога",
+			"• Регулярная терапия",
+			"• Группы поддержки")
+	default:
+		recs = append(recs,
+			"• Профилактика",
+			"• Образовательные программы")
+	}
+	
+	return recs
+}
+// ContainsString проверяет наличие строки в слайсе
+func ContainsString(slice []string, item string) bool {
+    for _, s := range slice {
+        if s == item {
+            return true
+        }
+    }
+    return false
+}
 

@@ -3,6 +3,7 @@ package analysis
 import (
 	"fmt"
 	"strings"
+	"time"  // <--- ЭТО НУЖНО ДОБАВИТЬ
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
 	"github.com/ruvcoindev/idealcore/pkg/hypercube/model"
@@ -86,6 +87,18 @@ type AbuseDynamics struct {
 	ReportedCount           int
 }
 
+// ExtendFamilyMemberWithAbuse расширяет члена семьи данными о насилии
+type ExtendFamilyMemberWithAbuse struct {
+	*data.ExtendedFamilyMember
+	AbuseHistory        *AbuseHistory
+	AbuseRiskScore      float64               // риск стать жертвой/абьюзером (0-1)
+	ProtectiveFactors   []string              // защитные факторы
+	VulnerabilityFactors []string             // факторы уязвимости
+	ChildhoodAbuse      bool                  // было ли насилие в детстве
+	SupportSystems      []string              // системы поддержки
+	TherapyHistory      []string              // история терапии
+}
+
 // AbuseAnalysisResult содержит результаты анализа насилия
 type AbuseAnalysisResult struct {
 	FamilyID            string
@@ -125,14 +138,6 @@ func (ah *AbuseHistory) AddAbuseIncident(incident AbuseIncident, role string) {
 	}
 }
 
-// ExtendFamilyMemberWithAbuse расширяет члена семьи данными о насилии
-type ExtendFamilyMemberWithAbuse struct {
-	*data.ExtendedFamilyMember
-	AbuseHistory        *AbuseHistory
-	AbuseRiskScore      float64               // риск стать жертвой/абьюзером (0-1)
-	ProtectiveFactors   []string              // защитные факторы
-	VulnerabilityFactors []string             // факторы уязвимости
-}
 
 // AnalyzeAbuseDynamics анализирует динамику насилия в семье
 func AnalyzeAbuseDynamics(fs *model.FamilySystem) *AbuseAnalysisResult {
@@ -254,21 +259,17 @@ func AnalyzeAbuseDynamics(fs *model.FamilySystem) *AbuseAnalysisResult {
 		}
 	}
 
-	// Ищем энейблеров (тех, кто знал и не вмешивался)
+		// Ищем энейблеров (тех, кто знал и не вмешивался)
 	for id, member := range fs.Members {
 		if id == dynamics.PrimaryAbuserID || id == dynamics.PrimaryVictimID {
 			continue
 		}
-		// Проверяем, были ли свидетелями
-		for _, inc := range result.Incidents {
-			// Упрощенно: если человек был в отношениях с абьюзером или жертвой
-			if member.HasPartner(dynamics.PrimaryAbuserID) || 
-			   member.HasPartner(dynamics.PrimaryVictimID) ||
-			   containsString(member.Children, dynamics.PrimaryVictimID) ||
-			   containsString(member.Parents, dynamics.PrimaryVictimID) {
-				dynamics.Enablers = append(dynamics.Enablers, id)
-				break
-			}
+		// Проверяем, связан ли с абьюзером или жертвой
+		if member.HasPartner(dynamics.PrimaryAbuserID) || 
+		   member.HasPartner(dynamics.PrimaryVictimID) ||
+		   containsString(member.Children, dynamics.PrimaryVictimID) ||
+		   containsString(member.Parents, dynamics.PrimaryVictimID) {
+			dynamics.Enablers = append(dynamics.Enablers, id)
 		}
 	}
 
@@ -639,7 +640,7 @@ func CalculateAbuseRisk(member *ExtendFamilyMemberWithAbuse, fs *model.FamilySys
 }
 
 // containsString проверяет наличие строки в слайсе
-func containsString(slice []string, item string) bool {
+func ContainsString(slice []string, item string) bool {
 	for _, s := range slice {
 		if s == item {
 			return true

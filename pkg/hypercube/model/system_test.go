@@ -2,8 +2,8 @@ package model
 
 import (
 	"testing"
-	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
-	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"  // ИСПРАВЛЕНО: добавлен pkg/
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"  // ИСПРАВЛЕНО: добавлен pkg/
 )
 
 func TestNewFamilySystem(t *testing.T) {
@@ -28,8 +28,9 @@ func TestNewFamilySystem(t *testing.T) {
 func TestAddMember(t *testing.T) {
 	fs := NewFamilySystem(false)
 	
-	member1, _ := data.CreateFamilyMember("m1", "Мать", core.GenderFemale, "15.05.1970")
-	member2, _ := data.CreateFamilyMember("c1", "Ребенок", core.GenderFemale, "15.06.1995")
+	// ИСПРАВЛЕНО: добавлены роли
+	member1, _ := data.CreateFamilyMember("m1", "Мать", core.GenderFemale, core.RoleMother, "15.05.1970")
+	member2, _ := data.CreateFamilyMember("c1", "Ребенок", core.GenderFemale, core.RoleDaughter, "15.06.1995")
 	member2.Parents = []string{"m1"}
 	member1.Children = []string{"c1"}
 	
@@ -51,7 +52,8 @@ func TestAddMember(t *testing.T) {
 
 func TestGetMember(t *testing.T) {
 	fs := NewFamilySystem(false)
-	member, _ := data.CreateFamilyMember("test1", "Тест", core.GenderMale, "15.05.1990")
+	// ИСПРАВЛЕНО: добавлена роль
+	member, _ := data.CreateFamilyMember("test1", "Тест", core.GenderMale, core.RoleSon, "15.05.1990")
 	fs.AddMember(member)
 	
 	result := fs.GetMember("test1")
@@ -71,10 +73,11 @@ func TestGetMember(t *testing.T) {
 func TestGetSiblings(t *testing.T) {
 	fs := NewFamilySystem(false)
 	
-	parent, _ := data.CreateFamilyMember("p1", "Родитель", core.GenderFemale, "15.05.1970")
-	child1, _ := data.CreateFamilyMember("c1", "Ребенок1", core.GenderFemale, "15.06.1995")
-	child2, _ := data.CreateFamilyMember("c2", "Ребенок2", core.GenderFemale, "15.06.1998")
-	child3, _ := data.CreateFamilyMember("c3", "Ребенок3", core.GenderFemale, "15.06.2001")
+	// ИСПРАВЛЕНО: добавлены роли
+	parent, _ := data.CreateFamilyMember("p1", "Родитель", core.GenderFemale, core.RoleMother, "15.05.1970")
+	child1, _ := data.CreateFamilyMember("c1", "Ребенок1", core.GenderFemale, core.RoleDaughter, "15.06.1995")
+	child2, _ := data.CreateFamilyMember("c2", "Ребенок2", core.GenderFemale, core.RoleDaughter, "15.06.1998")
+	child3, _ := data.CreateFamilyMember("c3", "Ребенок3", core.GenderFemale, core.RoleDaughter, "15.06.2001")
 	
 	child1.Parents = []string{"p1"}
 	child2.Parents = []string{"p1"}
@@ -102,10 +105,11 @@ func TestGetSiblings(t *testing.T) {
 func TestGetBirthOrder(t *testing.T) {
 	fs := NewFamilySystem(false)
 	
-	parent, _ := data.CreateFamilyMember("p1", "Родитель", core.GenderFemale, "15.05.1970")
-	child1, _ := data.CreateFamilyMember("c1", "Ребенок1", core.GenderFemale, "15.06.1995")
-	child2, _ := data.CreateFamilyMember("c2", "Ребенок2", core.GenderFemale, "15.06.1998")
-	child3, _ := data.CreateFamilyMember("c3", "Ребенок3", core.GenderFemale, "15.06.2001")
+	// ИСПРАВЛЕНО: добавлены роли
+	parent, _ := data.CreateFamilyMember("p1", "Родитель", core.GenderFemale, core.RoleMother, "15.05.1970")
+	child1, _ := data.CreateFamilyMember("c1", "Ребенок1", core.GenderFemale, core.RoleDaughter, "15.06.1995")
+	child2, _ := data.CreateFamilyMember("c2", "Ребенок2", core.GenderFemale, core.RoleDaughter, "15.06.1998")
+	child3, _ := data.CreateFamilyMember("c3", "Ребенок3", core.GenderFemale, core.RoleDaughter, "15.06.2001")
 	
 	child1.Parents = []string{"p1"}
 	child2.Parents = []string{"p1"}
@@ -136,9 +140,10 @@ func TestGetBirthOrder(t *testing.T) {
 func TestGetGenerationSpread(t *testing.T) {
 	fs := NewFamilySystem(false)
 	
-	g1, _ := data.CreateFamilyMember("g1", "Поколение1", core.GenderFemale, "15.05.1950")
-	g2, _ := data.CreateFamilyMember("g2", "Поколение2", core.GenderFemale, "15.05.1975")
-	g3, _ := data.CreateFamilyMember("g3", "Поколение3", core.GenderFemale, "15.05.2000")
+	// ИСПРАВЛЕНО: добавлены роли
+	g1, _ := data.CreateFamilyMember("g1", "Поколение1", core.GenderFemale, core.RoleGrandmother, "15.05.1950")
+	g2, _ := data.CreateFamilyMember("g2", "Поколение2", core.GenderFemale, core.RoleMother, "15.05.1975")
+	g3, _ := data.CreateFamilyMember("g3", "Поколение3", core.GenderFemale, core.RoleDaughter, "15.05.2000")
 	
 	g2.Parents = []string{"g1"}
 	g3.Parents = []string{"g2"}
@@ -156,9 +161,10 @@ func TestGetGenerationSpread(t *testing.T) {
 func TestGetMembersByGeneration(t *testing.T) {
 	fs := NewFamilySystem(false)
 	
-	g1_1, _ := data.CreateFamilyMember("g1_1", "Поколение1_1", core.GenderFemale, "15.05.1950")
-	g1_2, _ := data.CreateFamilyMember("g1_2", "Поколение1_2", core.GenderMale, "15.05.1952")
-	g2, _ := data.CreateFamilyMember("g2", "Поколение2", core.GenderFemale, "15.05.1975")
+	// ИСПРАВЛЕНО: добавлены роли
+	g1_1, _ := data.CreateFamilyMember("g1_1", "Поколение1_1", core.GenderFemale, core.RoleGrandmother, "15.05.1950")
+	g1_2, _ := data.CreateFamilyMember("g1_2", "Поколение1_2", core.GenderMale, core.RoleGrandfather, "15.05.1952")
+	g2, _ := data.CreateFamilyMember("g2", "Поколение2", core.GenderFemale, core.RoleMother, "15.05.1975")
 	
 	g2.Parents = []string{"g1_1", "g1_2"}
 	

@@ -1,9 +1,10 @@
 package analysis
 
 import (
-	"time"
-	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
-	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
+	//"time"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"   // ПРАВИЛЬНО
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"   // ПРАВИЛЬНО
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/model"  // НУЖНО ДОБАВИТЬ
 )
 
 // ReplacementPattern представляет паттерн замещения

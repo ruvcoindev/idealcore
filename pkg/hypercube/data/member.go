@@ -46,6 +46,13 @@ type ExtendedFamilyMember struct {
 	ConsciousnessLevel float64
 	IdentityDiffusion float64
 	SurvivorGuilt    float64
+        Abortions         []AbortionData  // добавляем это поле
+}
+
+type AbortionData struct {
+    Date            string
+    EmotionalImpact float64
+    // другие поля при необходимости
 }
 
 // CreateFamilyMember создает нового члена семьи
