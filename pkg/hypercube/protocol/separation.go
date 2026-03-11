@@ -3,9 +3,9 @@ package protocol
 import (
 	"fmt"
 	"time"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
-	"github.com/ruvcoindev/idealcore/hypercube/data"
-	"github.com/ruvcoindev/idealcore/hypercube/analysis"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/analysis"
 )
 
 // SeparationStage описывает этап разделения

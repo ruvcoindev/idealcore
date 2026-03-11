@@ -1,0 +1,26 @@
+{
+  "family": {
+    "name": "Простая семья",
+    "members": [
+      {
+        "id": "mother",
+        "name": "Анна",
+        "gender": "female",
+        "birth_date": "15.05.1970"
+      },
+      {
+        "id": "father",
+        "name": "Иван",
+        "gender": "male",
+        "birth_date": "10.03.1968"
+      },
+      {
+        "id": "daughter",
+        "name": "Мария",
+        "gender": "female",
+        "birth_date": "15.06.1995",
+        "parents": ["mother", "father"]
+      }
+    ]
+  }
+}

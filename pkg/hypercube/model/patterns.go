@@ -3,7 +3,7 @@ package model
 import (
 	"fmt"
 	"sort"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
 )
 
 // FindFamilyPatterns выявляет все семейные паттерны

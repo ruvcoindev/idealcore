@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/ruvcoindev/idealcore/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
 )
 
 // isScapegoat проверяет, является ли человек "козлом отпущения"

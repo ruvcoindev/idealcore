@@ -3,9 +3,9 @@ package protocol
 import (
 	"fmt"
 	"strings"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
-	"github.com/ruvcoindev/idealcore/hypercube/model"
-	"github.com/ruvcoindev/idealcore/hypercube/analysis"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/model"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/analysis"
 )
 
 // FamilyReport содержит полный отчет по семье

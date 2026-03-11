@@ -2,8 +2,8 @@ package model
 
 import (
 	"sort"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
-	"github.com/ruvcoindev/idealcore/hypercube/data"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
 )
 
 // FamilySystem представляет полную семейную систему

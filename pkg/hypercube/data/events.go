@@ -2,64 +2,59 @@ package data
 
 import (
 	"time"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
 )
 
-// LifeEvent представляет значимое событие в жизни человека
-// События влияют на траекторию движения и могут быть триггерами травм
+// LifeEvent представляет значимое событие в жизни
 type LifeEvent struct {
-	Date        time.Time // Дата события
-	EventType   string    // Тип: "birth", "death", "marriage", "divorce", "civil_union", "separation", "trauma", "achievement", "loss"
-	Description string    // Описание (для пользователя)
-	WithPerson  string    // ID другого человека (если событие связано с кем-то)
-	Impact      float64   // Влияние на жизнь (0-1) - вычисляется или указывается пользователем
+	Date        time.Time
+	EventType   string
+	Description string
+	WithPerson  string
+	Impact      float64
 }
 
-// Disease представляет наследственное или хроническое заболевание
-// Учитывается при расчете кармической нагрузки и травм
+// Disease представляет заболевание
 type Disease struct {
-	Name        string    // Название заболевания
-	Severity    float64   // Тяжесть (0-1): 0.1 - легкое, 0.5 - среднее, 1.0 - критическое
-	Type        string    // Тип: "mental" (психическое), "physical" (физическое), "chronic" (хроническое), "genetic" (генетическое)
-	DiagnosisDate *time.Time // Дата диагностики (если известна)
-	FromParent  string    // ID родителя, от которого унаследовано (если известно)
-	IsGenetic   bool      // Является ли генетическим/наследственным
+	Name        string
+	Severity    float64
+	Type        string
+	DiagnosisDate *time.Time
+	FromParent  string
+	IsGenetic   bool
 }
 
-// Infidelity представляет измену в отношениях
-// Учитывается для кармического анализа и паттернов повторения
+// Infidelity представляет измену
 type Infidelity struct {
-	Date          time.Time // Дата измены
-	PartnerAtTime string    // ID партнера, которому изменили
-	WithPerson    string    // ID человека, с которым изменили
-	WasDiscovered bool      // Было ли раскрыто
-	Impact        float64   // Влияние на отношения (0-1)
-	Description   string    // Описание (для контекста)
+	Date          time.Time
+	PartnerAtTime string
+	WithPerson    string
+	WasDiscovered bool
+	Impact        float64
+	Description   string
 }
 
-// KarmicDebt представляет кармический долг между членами семьи
-// Вычисляется автоматически на основе паттернов повторения
+// KarmicDebt представляет кармический долг
 type KarmicDebt struct {
-	CreditorID  string    // ID того, кому должны (кто пострадал)
-	DebtorID    string    // ID того, кто должен (кто нанес вред)
-	Nature      string    // Природа долга: "replacement" (замещение), "guilt" (вина), "shame" (стыд), "obligation" (обязательство), "betrayal" (предательство)
-	Weight      float64   // Вес долга (0-1)
-	IsResolved  bool      // Отработан ли долг
-	Description string    // Описание паттерна
-	OriginEvent *LifeEvent // Событие, породившее долг (если есть)
+	CreditorID  string
+	DebtorID    string
+	Nature      string
+	Weight      float64
+	IsResolved  bool
+	Description string
 }
 
-// ShamePattern описывает паттерн стыда, характерный для человека
-// Стыд может проявляться по-разному в теле и поведении
+// ShamePattern описывает паттерн стыда
 type ShamePattern struct {
-	Pattern     string   // Тип: "burning" (сжигание), "freezing" (заморозка), "fleeing" (бегство)
-	Score       float64  // Уровень стыда (0-100)
-	BodyZone    string   // Зона тела: "heart" (сердце), "throat" (горло), "gut" (живот), "head" (голова), "whole" (все тело)
-	Triggers    []string // События или ситуации, вызывающие стыд
+	Pattern     string
+	Score       float64
+	BodyZone    string
+	Triggers    []string
 }
 
 // AddLifeEvent добавляет событие в историю
 func (m *ExtendedFamilyMember) AddLifeEvent(eventType, description string, dateStr string, withPerson string, impact float64) error {
-	date, err := time.Parse("02.01.2006", dateStr)
+	date, err := core.ParseDate(dateStr)
 	if err != nil {
 		return err
 	}
@@ -74,7 +69,6 @@ func (m *ExtendedFamilyMember) AddLifeEvent(eventType, description string, dateS
 	
 	m.Events = append(m.Events, event)
 	
-	// Автоматические обновления в зависимости от типа события
 	switch eventType {
 	case "marriage", "civil_union":
 		if withPerson != "" && !m.HasPartner(withPerson) {
@@ -106,7 +100,7 @@ func (m *ExtendedFamilyMember) AddDisease(name string, severity float64, disease
 
 // AddInfidelity добавляет измену
 func (m *ExtendedFamilyMember) AddInfidelity(dateStr string, partnerAtTime string, withPerson string, wasDiscovered bool, impact float64, description string) error {
-	date, err := time.Parse("02.01.2006", dateStr)
+	date, err := core.ParseDate(dateStr)
 	if err != nil {
 		return err
 	}
@@ -122,7 +116,6 @@ func (m *ExtendedFamilyMember) AddInfidelity(dateStr string, partnerAtTime strin
 	
 	m.Infidelities = append(m.Infidelities, infidelity)
 	
-	// Добавляем кармический долг
 	debt := KarmicDebt{
 		DebtorID:    m.ID,
 		CreditorID:  partnerAtTime,

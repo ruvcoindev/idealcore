@@ -1,0 +1,116 @@
+{
+  "family": {
+    "name": "Большая семья",
+    "members": [
+      {
+        "id": "mother",
+        "name": "Екатерина",
+        "gender": "female",
+        "birth_date": "01.01.1960"
+      },
+      {
+        "id": "father",
+        "name": "Петр",
+        "gender": "male",
+        "birth_date": "15.03.1958"
+      }
+    ]
+  }
+}
+  ,
+      {
+        "id": "child1",
+        "name": "Дочь 1",
+        "gender": "female",
+        "birth_date": "01.2.1981",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child2",
+        "name": "Сын 2",
+        "gender": "male",
+        "birth_date": "02.3.1982",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child3",
+        "name": "Дочь 3",
+        "gender": "female",
+        "birth_date": "03.4.1983",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child4",
+        "name": "Сын 4",
+        "gender": "male",
+        "birth_date": "04.5.1984",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child5",
+        "name": "Дочь 5",
+        "gender": "female",
+        "birth_date": "05.6.1985",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child6",
+        "name": "Сын 6",
+        "gender": "male",
+        "birth_date": "06.7.1986",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child7",
+        "name": "Дочь 7",
+        "gender": "female",
+        "birth_date": "07.8.1987",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child8",
+        "name": "Сын 8",
+        "gender": "male",
+        "birth_date": "08.9.1988",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child9",
+        "name": "Дочь 9",
+        "gender": "female",
+        "birth_date": "09.10.1989",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child10",
+        "name": "Сын 10",
+        "gender": "male",
+        "birth_date": "10.11.1990",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child11",
+        "name": "Дочь 11",
+        "gender": "female",
+        "birth_date": "11.12.1991",
+        "parents": ["mother", "father"]
+      }
+  ,
+      {
+        "id": "child12",
+        "name": "Сын 12",
+        "gender": "male",
+        "birth_date": "12.1.1992",
+        "parents": ["mother", "father"]
+      }
+  ]\n}

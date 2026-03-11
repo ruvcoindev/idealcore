@@ -2,8 +2,8 @@ package protocol
 
 import (
 	"fmt"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
-	"github.com/ruvcoindev/idealcore/hypercube/data"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
 )
 
 // TherapyRecommendation содержит рекомендацию по терапии

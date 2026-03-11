@@ -2,7 +2,7 @@ package data
 
 import (
 	"time"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
 )
 
 // LostChild представляет потерянного ребенка
@@ -45,7 +45,8 @@ type ReplacementChildData struct {
 
 // AddLostChild добавляет запись о потерянном ребенке
 func (m *ExtendedFamilyMember) AddLostChild(lossType core.LossType, lossDateStr string, gestationWeeks int, fatherID string) error {
-	lossDate, err := time.Parse("02.01.2006", lossDateStr)
+	// ИСПРАВЛЕНО: используем core.ParseDate вместо time.Parse
+	lossDate, err := core.ParseDate(lossDateStr)
 	if err != nil {
 		return err
 	}
@@ -99,7 +100,8 @@ func (m *ExtendedFamilyMember) AddLostChild(lossType core.LossType, lossDateStr 
 // MarkAsReplacement помечает ребенка как замещающего
 // Вызывается, когда ребенок рождается после потери
 func (m *ExtendedFamilyMember) MarkAsReplacement(replacesID string, conceptionDateStr string, parentsAware, isExplicit bool) error {
-	conceptionDate, err := time.Parse("02.01.2006", conceptionDateStr)
+	// ИСПРАВЛЕНО: используем core.ParseDate вместо time.Parse
+	conceptionDate, err := core.ParseDate(conceptionDateStr)
 	if err != nil {
 		return err
 	}

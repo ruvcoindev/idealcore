@@ -2,8 +2,8 @@ package analysis
 
 import (
 	"math"
-	"github.com/ruvcoindev/idealcore/hypercube/core"
-	"github.com/ruvcoindev/idealcore/hypercube/data"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
 )
 
 // ShameAnalysisResult содержит результаты анализа стыда

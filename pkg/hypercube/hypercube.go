@@ -10,11 +10,11 @@ import (
 	"time"
 	
 	// Внутренние пакеты
-	"github.com/ruvcoindev/idealcore/hypercube/core"
-	"github.com/ruvcoindev/idealcore/hypercube/data"
-	"github.com/ruvcoindev/idealcore/hypercube/model"
-	"github.com/ruvcoindev/idealcore/hypercube/analysis"
-	"github.com/ruvcoindev/idealcore/hypercube/protocol"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/core"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/data"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/model"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/analysis"
+	"github.com/ruvcoindev/idealcore/pkg/hypercube/protocol"
 )
 
 // ==================== КОНСТАНТЫ ====================
