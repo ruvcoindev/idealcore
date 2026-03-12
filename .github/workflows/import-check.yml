@@ -1,0 +1,12 @@
+# .github/workflows/import-check.yml
+name: Check Imports
+on: [push, pull_request]
+jobs:
+  check-imports:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check for incorrect imports
+        run: |
+          ! grep -r "github.com/ruvcoindev/idealcore/hypercube" --include="*.go" pkg/ | grep -v "pkg/hypercube"
+          ! grep -r "github.com/idealcore/hypercube" --include="*.go" pkg/
